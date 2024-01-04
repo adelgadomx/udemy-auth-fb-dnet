@@ -1,6 +1,8 @@
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using NetFirebase.Api.Services.Authentication;
+using Microsoft.Extensions.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,10 +14,27 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Use Firebase Authentication
-FirebaseApp.Create(new AppOptions {
+FirebaseApp.Create(new AppOptions
+{
     Credential = GoogleCredential.FromFile("firebase.json")
 });
-builder.Services.AddSingleton<IAuthenticationService,AuthenticationService>();
+// Register in dependency container
+// builder.Services.AddSingleton<IAuthenticationService,AuthenticationService>();
+builder.Services.AddHttpClient<IAuthenticationService, AuthenticationService>((sp, httpClient) =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    httpClient.BaseAddress = new Uri(configuration["Authentication:TokenUri"]!);
+});
+
+// Use 
+builder.Services
+       .AddAuthentication()
+       .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, JwtOptions =>
+       {
+           JwtOptions.Authority = builder.Configuration["Authentication:ValidIssuer"];
+           JwtOptions.Audience = builder.Configuration["Authentication:Audience"];
+           JwtOptions.TokenValidationParameters.ValidIssuer = builder.Configuration["Authentication:ValidIssuer"];
+       });
 
 var app = builder.Build();
 
@@ -28,8 +47,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.MapControllers();
+
+app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.Run();

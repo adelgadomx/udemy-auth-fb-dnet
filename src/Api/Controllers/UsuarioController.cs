@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using NetFirebase.Api.Dtos.Login;
 using NetFirebase.Api.Dtos.UsuarioRegister;
 using NetFirebase.Api.Services.Authentication;
 
@@ -23,5 +24,14 @@ public class UsuarioController : ControllerBase
     {
         return await _authenticationService.RegisterAsync(request);
     }
+
+    [HttpPost("login")]
+    public async Task<ActionResult<string>> Login (
+        [FromBody] LoginRequestDto request
+    )
+    {
+        return await _authenticationService.LoginAsync(request);
+    }
+
 }
     
