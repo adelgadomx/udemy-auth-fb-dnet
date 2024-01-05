@@ -1,7 +1,8 @@
-namespace NetFirebase.Api.Dtos.Login;
-
-public class LoginRequestDto 
+namespace NetFirebase.Api.Dtos.Login
 {
-    public string? Email { get; set; }
-    public string? Password { get; set; }
+    public class LoginRequestDto 
+    {
+        public string? Email { get; set; }
+        public string? Password { get; set; }
+    }
 }

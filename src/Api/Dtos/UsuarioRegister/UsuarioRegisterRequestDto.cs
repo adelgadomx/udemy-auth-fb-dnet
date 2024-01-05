@@ -1,8 +1,9 @@
-namespace NetFirebase.Api.Dtos.UsuarioRegister;
-
-public class UsuarioRegisterRequestDto
+namespace NetFirebase.Api.Dtos.UsuarioRegister
 {
-    public string? Email { get; set; }
-    public string? Password { get; set; }
-}
+    public class UsuarioRegisterRequestDto
+    {
+        public string? Email { get; set; }
+        public string? Password { get; set; }
+    }
 
+}

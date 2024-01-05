@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "name": "C#: NetFirebase.Api",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}\\src\\Api\\NetFirebase.Api.csproj",
+            "launchConfigurationId": "TargetFramework=;http"
+        }
+    ]
+}

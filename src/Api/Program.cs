@@ -1,8 +1,10 @@
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using NetFirebase.Api.Services.Authentication;
-using Microsoft.Extensions.Http;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using NetFirebase.Api.Data;
+using Microsoft.EntityFrameworkCore;
+using NetFirebase.Api.Services.Productos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +37,18 @@ builder.Services
            JwtOptions.Audience = builder.Configuration["Authentication:Audience"];
            JwtOptions.TokenValidationParameters.ValidIssuer = builder.Configuration["Authentication:ValidIssuer"];
        });
+
+// Databse
+builder.Services.AddDbContext<DatabaseContext>(opt =>
+{
+    opt.LogTo(Console.WriteLine, new[] {
+            DbLoggerCategory.Database.Command.Name
+        },
+        LogLevel.Information
+    ).EnableSensitiveDataLogging();
+    opt.UseSqlite(builder.Configuration.GetConnectionString("SqlDatabase"));
+});
+builder.Services.AddScoped<IProductoService, ProductoService>();
 
 var app = builder.Build();
 

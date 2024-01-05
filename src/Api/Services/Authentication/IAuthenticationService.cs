@@ -1,10 +1,11 @@
 using NetFirebase.Api.Dtos.Login;
 using NetFirebase.Api.Dtos.UsuarioRegister;
 
-namespace NetFirebase.Api.Services.Authentication;
-
-public interface IAuthenticationService
+namespace NetFirebase.Api.Services.Authentication
 {
-    Task<string> RegisterAsync(UsuarioRegisterRequestDto request);
-    Task<string> LoginAsync(LoginRequestDto request);
+    public interface IAuthenticationService
+    {
+        Task<string> RegisterAsync(UsuarioRegisterRequestDto request);
+        Task<string> LoginAsync(LoginRequestDto request);
+    }
 }
