@@ -3,35 +3,36 @@ using NetFirebase.Api.Dtos.Login;
 using NetFirebase.Api.Dtos.UsuarioRegister;
 using NetFirebase.Api.Services.Authentication;
 
-namespace NetFirebase.Api.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
- 
-public class UsuarioController : ControllerBase 
+namespace NetFirebase.Api.Controllers
 {
-    private readonly IAuthenticationService _authenticationService;
-
-    public UsuarioController(IAuthenticationService authenticationService)
+    [ApiController]
+    [Route("api/[controller]")]
+ 
+    public class UsuarioController : ControllerBase 
     {
-        _authenticationService = authenticationService;
-    }
+        private readonly IAuthenticationService _authenticationService;
 
-    [HttpPost("register")]
-    public async Task<ActionResult<string>> Register (
-        [FromBody] UsuarioRegisterRequestDto request
-    )
-    {
-        return await _authenticationService.RegisterAsync(request);
-    }
+        public UsuarioController(IAuthenticationService authenticationService)
+        {
+            _authenticationService = authenticationService;
+        }
 
-    [HttpPost("login")]
-    public async Task<ActionResult<string>> Login (
-        [FromBody] LoginRequestDto request
-    )
-    {
-        return await _authenticationService.LoginAsync(request);
-    }
+        [HttpPost("register")]
+        public async Task<ActionResult<string>> Register (
+            [FromBody] UsuarioRegisterRequestDto request
+        )
+        {
+            return await _authenticationService.RegisterAsync(request);
+        }
 
-}
+        [HttpPost("login")]
+        public async Task<ActionResult<string>> Login (
+            [FromBody] LoginRequestDto request
+        )
+        {
+            return await _authenticationService.LoginAsync(request);
+        }
+
+    }
     
+}
