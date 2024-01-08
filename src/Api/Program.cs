@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using NetFirebase.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using NetFirebase.Api.Services.Productos;
+using NetFirebase.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Postgres DbContext
+var connectionString = builder.Configuration.GetConnectionString("PgDatabase");
+builder.Services.AddDbContext<DatabaseContext>(options => {
+    options.UseNpgsql(connectionString);
+});
 // Use Firebase Authentication
 FirebaseApp.Create(new AppOptions
 {
@@ -38,8 +44,8 @@ builder.Services
            JwtOptions.TokenValidationParameters.ValidIssuer = builder.Configuration["Authentication:ValidIssuer"];
        });
 
-// Databse
-builder.Services.AddDbContext<DatabaseContext>(opt =>
+// Databse sqlite - replaced by pg databse
+/* builder.Services.AddDbContext<DatabaseContext>(opt =>
 {
     opt.LogTo(Console.WriteLine, new[] {
             DbLoggerCategory.Database.Command.Name
@@ -48,7 +54,10 @@ builder.Services.AddDbContext<DatabaseContext>(opt =>
     ).EnableSensitiveDataLogging();
     opt.UseSqlite(builder.Configuration.GetConnectionString("SqlDatabase"));
 });
-builder.Services.AddScoped<IProductoService, ProductoService>();
+ */
+ 
+ // Add models to Injection repository
+ builder.Services.AddScoped<IProductoService, ProductoService>();
 
 var app = builder.Build();
 
@@ -66,5 +75,7 @@ app.MapControllers();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.AddDataProductos();
 
 app.Run();

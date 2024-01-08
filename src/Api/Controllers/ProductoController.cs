@@ -15,6 +15,27 @@ public class ProductoController : ControllerBase
         _productoService = productoService;
     }
 
+    [HttpGet]
+    public async Task<ActionResult> GetAllProductos()
+    {
+        var resultados = await _productoService.GetAllProductos();
+        return Ok(resultados);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult> GetProductoById(int id)
+    {
+        var resultado = await _productoService.GetProductoById(id);
+        return Ok(resultado);
+    }
+
+    [HttpGet("nombre/{nombre}")]
+    public async Task<ActionResult> GetProductoByNombre(string nombre)
+    {
+        var resultado = await _productoService.GetProductosByNombre(nombre);
+        return Ok(resultado);
+    }
+
     [HttpPost]
     public async Task<ActionResult> CreateProducto(
         [FromBody] Producto request
@@ -24,17 +45,19 @@ public class ProductoController : ControllerBase
         return Ok();
     }
 
-    [HttpGet]
-    public async Task<ActionResult> GetAllProductos()
+    [HttpPatch]
+    public async Task<ActionResult> UpdateProducto(
+        [FromBody] Producto request
+    )
     {
-        var resultados = await _productoService.GetAllProductos();
-        return Ok(resultados);
+        await _productoService.UpdateProducto(request);
+        return Ok();
     }
-    
-    [HttpGet("{id}")]
-    public async Task<ActionResult> GetProductoById(int id)
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteProducto(int id)
     {
-        var resultado = await _productoService.GetProductoById(id);
-        return Ok(resultado);
+        await _productoService.DeleteProducto(id);
+        return Ok();
     }
 }

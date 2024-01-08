@@ -6,6 +6,7 @@ namespace NetFirebase.Api.Services.Productos
     {
         Task<IEnumerable<Producto>> GetAllProductos();
         Task<Producto> GetProductoById(int id);
+        Task<List<Producto>> GetProductosByNombre(string nombre);
         Task CreateProducto(Producto producto);
         Task UpdateProducto(Producto producto);
         Task DeleteProducto(int id);

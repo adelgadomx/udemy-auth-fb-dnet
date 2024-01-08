@@ -8,7 +8,7 @@ public class ProductoService : IProductoService
 {
     private readonly DatabaseContext _context;
 
-    public ProductoService( DatabaseContext context)
+    public ProductoService(DatabaseContext context)
     {
         _context = context;
     }
@@ -16,58 +16,70 @@ public class ProductoService : IProductoService
     public async Task<IEnumerable<Producto>> GetAllProductos()
     {
         return await _context.Database.SqlQuery<Producto>(@$"
-            SELECT * FROM Productos
+            SELECT * FROM fx_query_productos()
         ").ToListAsync();
     }
 
     public async Task<Producto> GetProductoById(int id)
     {
         var resultado = await _context.Database.SqlQuery<Producto>(@$"
-            SELECT * FROM Productos WHERE Id = {id}
+            SELECT * FROM fx_query_productos({id}) ORDER BY ""Id""
         ").FirstOrDefaultAsync();
 
-        return resultado is null? null! : resultado!;
+        return resultado is null ? null! : resultado!;
+    }
+
+    public async Task<List<Producto>> GetProductosByNombre(string nombre)
+    {
+        return await _context.Database.SqlQuery<Producto>(@$"
+            SELECT * FROM fx_query_productos_by_nombre({nombre})
+        ").ToListAsync();
     }
 
     public async Task CreateProducto(Producto producto)
     {
-        var result = await _context.Database.ExecuteSqlAsync(@$"
-          INSERT INTO Productos (
-            Nombre, Descripcion, Precio
-          ) VALUES (
-            {producto.Nombre},
-            {producto.Descripcion},
-            {producto.Precio}
-          )
-        ");
-        if (result <= 0) {
-            throw new Exception("Errores al insertar producto");
+        try
+        {
+            await _context.Database.ExecuteSqlAsync(@$"
+            CALL sp_insert_producto({producto.Precio}, {producto.Nombre}, {producto.Descripcion})
+            ");
+
+        }
+        catch (System.Exception e)
+        {
+            throw new Exception($"Error al intentar insertar registro {producto.Nombre} \n {e}");
         }
     }
 
     public async Task UpdateProducto(Producto producto)
     {
-        var result = await _context.Database.ExecuteSqlAsync(@$"
-          UPDATE Productos
-             SET Nombre = {producto.Nombre}
-               , Descripcion = {producto.Descripcion}
-               , Precio = {producto.Precio}
-           WHERE id = {producto.Id}
-        ");
-        if (result <= 0) {
-            throw new Exception($"No se encontro el product {producto.Id}");
+
+        try
+        {
+            await _context.Database.ExecuteSqlAsync(@$"
+            CALL sp_update_producto({producto.Id}, {producto.Precio}, {producto.Nombre}, {producto.Descripcion})
+            ");
         }
+        catch (System.Exception e)
+        {
+            throw new Exception($"Error al intentar actualizar registro {producto.Id} \n {e}");
+        }
+
     }
 
     public async Task DeleteProducto(int id)
     {
-        var resultado = await _context.Database.ExecuteSqlAsync(@$"
-            DELETE Productos WHERE Id = {id}
-        ");
-
-        if (resultado <= 0) {
-            throw new Exception($"No se encontró el product {id}");
+        try
+        {
+            await _context.Database.ExecuteSqlAsync(@$"
+            CALL sp_delete_producto({id})
+            ");
         }
+        catch (System.Exception e)
+        {
+            throw new Exception($"Error al intentar borrar registro {id} \n {e}");
+        }
+
     }
 
     public Task<bool> SaveChanges()
