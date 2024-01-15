@@ -1,4 +1,5 @@
 {
     "editor.fontFamily": "'fira-code-nerd', Consolas, 'Courier New', monospace",
-    "workbench.iconTheme": "fira-code-material-minimal"
+    "workbench.iconTheme": "fira-code-material-minimal",
+    "editor.fontSize": 12
 }

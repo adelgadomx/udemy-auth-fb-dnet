@@ -1,0 +1,60 @@
+@page "/productos"
+@inject HttpClient Http
+@inject NavigationManager nm
+
+<h3>Productos</h3>
+
+<button @onclick="AgregarProducto" class="btn btn-primary">Agregar Producto</button>
+
+@if (productos!.Count <= 0)
+{
+    <span>Cargando productos...</span>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in productos)
+            {
+                <tr>
+                    <td>@p.Id</td>
+                    <td>@p.Nombre</td>
+                    <td>@p.Descripcion</td>
+                    <td>@p.Precio</td>
+                    <td>
+                        <button @onclick="() => EditarProducto(p.Id)" class="btn btn-primary">Editar</button>
+                    </td> 
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code
+{
+    List<Producto>? productos = new List<Producto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        productos = await Http.GetFromJsonAsync<List<Producto>>("/api/producto");
+    }
+
+    void AgregarProducto ()
+    {
+        nm.NavigateTo("/producto") ;
+    } 
+
+    void EditarProducto(int id)
+    {
+        nm.NavigateTo($"/producto/{id}");
+    }
+}

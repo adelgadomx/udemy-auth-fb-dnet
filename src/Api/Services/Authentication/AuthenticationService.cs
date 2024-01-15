@@ -22,6 +22,8 @@ namespace NetFirebase.Api.Services.Authentication
             };
 
             var response = await _httpClient.PostAsJsonAsync("", credentials);
+            if(!response.IsSuccessStatusCode) throw new Exception("Credenciales no validas");
+
             var authFirebaseObject = await response.Content.ReadFromJsonAsync<AuthFirebase>();
             return authFirebaseObject!.IdToken!;
         }
@@ -29,6 +31,7 @@ namespace NetFirebase.Api.Services.Authentication
         public async Task<string> RegisterAsync(UsuarioRegisterRequestDto request)
         {
             var userArgs = new UserRecordArgs {
+                DisplayName = request.FullNombre,
                 Email = request.Email,
                 Password = request.Password
             };
